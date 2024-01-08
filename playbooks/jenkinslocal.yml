@@ -1,0 +1,15 @@
+---
+- name: Install Jenkins
+  hosts: localhost
+  
+  
+  tasks:
+  - name: Install Jenkins brew
+    homebrew:
+      name: jenkins
+      state: present
+  
+  - name: Start Jenkins
+    shell: brew services start jenkins
+    args:
+      executable: /bin/bash
