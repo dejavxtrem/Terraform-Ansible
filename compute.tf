@@ -44,10 +44,10 @@ resource "aws_instance" "terraformansible_main" {
   }
 
   #remove ip address from aws_host when destroyed
-#   provisioner "local-exec" {
-#     when    = destroy
-#     command = "sed -i '/^[0-9]/d' aws_hosts"
-#   }
+  #   provisioner "local-exec" {
+  #     when    = destroy
+  #     command = "sed -i '/^[0-9]/d' aws_hosts"
+  #   }
 }
 
 # the null resource will wait untill all ec2 instance are created 
