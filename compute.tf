@@ -51,14 +51,14 @@ resource "aws_instance" "terraformansible_main" {
 }
 
 # the null resource will wait untill all ec2 instance are created 
-resource "null_resource" "grafana_install" {
-  depends_on = [aws_instance.terraformansible_main]
-  provisioner "local-exec" {
-    command = "ansible-playbook -i  aws_hosts --key-file ${var.private_key_path} --user ubuntu playbooks/grafana.yml --ssh-common-args '-o StrictHostKeyChecking=no' "
-  }
+# resource "null_resource" "grafana_install" {
+#   depends_on = [aws_instance.terraformansible_main]
+#   provisioner "local-exec" {
+#     command = "ansible-playbook -i  aws_hosts --key-file ${var.private_key_path} --user ubuntu playbooks/grafana.yml --ssh-common-args '-o StrictHostKeyChecking=no' "
+#   }
 
 
-}
+# }
 
 
 output "instance_ips" {
