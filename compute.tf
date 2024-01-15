@@ -65,7 +65,7 @@ output "grafana_instance_ips" {
   value = { for i in aws_instance.terraformansible_main[*] : i.tags.Name => "${i.public_ip}:3000" }
 }
 
-output "instance_ip" {
+output "instance_ips" {
   value = [for i in aws_instance.terraformansible_main[*]: i.public_ip]
 }
 
