@@ -20,6 +20,10 @@ pipeline {
             }
         }
         stage('validate apply') {
+            when {
+                beforeInput true
+                branch "devbranch"
+            }
             input {
                 message "Do you want to apply this plan"
                 ok "Apply this plan."
