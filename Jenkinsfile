@@ -39,7 +39,9 @@ pipeline {
         }
         stage ('Ec2 Wait') {
             steps {
-                sh 'aws ec2 wait instance-status-ok --region us-east-2'
+                sh '''aws ec2 wait instance-status-ok \\
+                    --instance-ids $(terraform show -json | jq -r \'.values\'.\'root_module\'.\'resources[] | select(.type == "aws_instance").values.id\') \\
+                    --region us-west-1'''
             }
         }
         stage ('validate ec2 provision') {
@@ -78,5 +80,9 @@ pipeline {
         failure {
             sh 'terraform destroy -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
         }
+        aborted {
+        sh 'terraform destroy -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
     }
+    }
+    
 }
