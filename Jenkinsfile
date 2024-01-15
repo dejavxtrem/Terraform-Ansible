@@ -9,6 +9,7 @@ pipeline {
             steps {
                 sh 'ls'
                 sh 'TF_IN_AUTOMATION=true'
+                sh 'terraform init'
             }
         }
         stage('Plan') {
