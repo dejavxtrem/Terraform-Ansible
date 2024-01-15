@@ -34,7 +34,7 @@ pipeline {
         }
         stage('Apply') {
             steps {
-                sh 'terraform apply -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
+                sh 'terraform apply -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars" -var-file= "test'
             }
         }
         stage ('Ec2 Wait') {
