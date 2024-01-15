@@ -28,6 +28,11 @@ pipeline {
                 sh 'aws ec2 wait instance-status-ok --region us-east-2'
             }
         }
+        stage('Ansible') {
+            steps {
+                ansiblePlaybook(credentialsId: 'SSH-private-key' , inventory: 'aws_hosts' , playbook: 'playbooks/main-playbook.yml')
+            }
+        }
         stage('Destroy') {
             steps {
                 sh 'terraform destroy -auto-approve -no-color'
