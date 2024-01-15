@@ -78,7 +78,7 @@ output "instance_ids" {
 #   provisioner "remote-exec" {
 #     inline = ["sudo apt upgrade -y grafana && touch upgrade.log && echo 'I updated Grafana' >> upgrade.log"]
 #   }
-
+# test new code
 #   connection {
 #     type        = "ssh"
 #     user        = "ubuntu"
