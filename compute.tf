@@ -66,7 +66,7 @@ output "grafana_instance_ips" {
 }
 
 output "instance_ips" {
-  value = [for i in aws_instance.terraws_instance.terraformansible_main[*]: i.public_ip]
+  value = [for i in aws_instance.terraformansible_main[*]: i.public_ip]
 }
 # resource "null_resource" "grafana_update" {
 #   count = var.main_instance_count
