@@ -37,7 +37,7 @@ pipeline {
                 sh 'terraform apply -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
             }
         }
-        stage ('invetory_stage') {
+        stage ('ansible_invetory_stage') {
             steps {
                 sh '''printf \\
                     "\\n$(terraform output -json instance_ips | jq -r \'.[]\')" \\
@@ -46,9 +46,9 @@ pipeline {
         }
         stage ('Ec2 Wait') {
             steps {
-                sh '''aws ec2 wait instance-status-ok \\
-                    --instance-ids $(terraform output -json instance_ids | jq -r \'.values\'.\'root_module\'.\'resources[] | select(.type == "aws_instance").values.id\') \\
-                    --region us-east-2'''
+                sh ''''aws ec2 wait instance-status-ok \\
+                      --instance-ids $(terraform output -json instance_ids | jq -r \'.[]\') \\
+                      --region us-east-2'''
             }
         }
         stage ('validate ansible') {
