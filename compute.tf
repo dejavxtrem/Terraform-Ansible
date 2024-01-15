@@ -65,9 +65,14 @@ output "grafana_instance_ips" {
   value = { for i in aws_instance.terraformansible_main[*] : i.tags.Name => "${i.public_ip}:3000" }
 }
 
-output "instance_ips" {
+output "instance_ip" {
   value = [for i in aws_instance.terraformansible_main[*]: i.public_ip]
 }
+
+output "instance_ids" {
+  value = [for i in aws_instance.terraformansible_main[*]: i.id]
+}
+
 # resource "null_resource" "grafana_update" {
 #   count = var.main_instance_count
 #   provisioner "remote-exec" {

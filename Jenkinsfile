@@ -37,14 +37,25 @@ pipeline {
                 sh 'terraform apply -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
             }
         }
+        stage ('invetory_stage') {
+            steps {
+                sh '''printf \\
+                    "\\n$(terraform output -json instance_ips | jq -r \'.[]\')" \\
+                    >> aws_hosts'''
+            }
+        }
         stage ('Ec2 Wait') {
             steps {
                 sh '''aws ec2 wait instance-status-ok \\
-                    --instance-ids $(terraform show -json | jq -r \'.values\'.\'root_module\'.\'resources[] | select(.type == "aws_instance").values.id\') \\
+                    --instance-ids $(terraform show -json instance_ids | jq -r \'.values\'.\'root_module\'.\'resources[] | select(.type == "aws_instance").values.id\') \\
                     --region us-east-2'''
             }
         }
-        stage ('validate ec2 provision') {
+        stage ('validate ansible') {
+            when {
+                beforeInput true
+                branch "devbranch"
+            }
             input {
                 message "Do you want to run Ansible?"
                 ok "Run Ansible"
@@ -58,13 +69,7 @@ pipeline {
                 ansiblePlaybook(credentialsId: 'SSH-private-key' , inventory: 'aws_hosts' , playbook: 'playbooks/main-playbook.yml')
             }
         }
-        stage ('invetory_stage') {
-            steps {
-                sh '''printf \\
-                    "\\n$(terraform output -json instance_ips | jq -r \'.[]\')" \\
-                    >> aws_hosts'''
-            }
-        }
+  
         stage('Validate Destroy') {
             input {
                 message "Do you want to destroy?"
