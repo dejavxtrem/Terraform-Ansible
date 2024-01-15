@@ -3,6 +3,7 @@ pipeline {
     environment {
         TF_IN_AUTOMATION = 'true'
         TF_CLI_CONFIG_FILE = credentials('Terraform_login')
+        TF_CLI_CONFIG_FILE = credentials('AWS_KEYS')
     }
     stages {
         stage('Init') {
@@ -14,8 +15,11 @@ pipeline {
         }
         stage('Plan') {
             steps {
-                sh 'TF_IN_AUTOMATION=true'
-                sh 'terraform plan -no-color'
+                withAWS(credentials: 'AWS_KEYS', region: 'us-east-2') (
+                    sh 'TF_IN_AUTOMATION=true'
+                    sh 'terraform plan -no-color'
+                )
+               
             }
         }
     }
