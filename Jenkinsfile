@@ -11,7 +11,7 @@ pipeline {
             steps {
                 sh 'ls'
                 sh 'cat $BRANCH_NAME.tfvars'
-                sh 'terraform init'
+                sh 'terraform init -no-color'
             }
         }
         stage('Plan') {
