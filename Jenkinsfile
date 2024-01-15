@@ -34,7 +34,7 @@ pipeline {
         }
         stage('Apply') {
             steps {
-                sh 'terraform apply -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars" -var-file= "test'
+                sh 'terraform apply -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
             }
         }
         stage ('Ec2 Wait') {
@@ -78,8 +78,9 @@ pipeline {
         failure {
             sh 'terraform destroy -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
         }
-    }
-    aborted {
+        aborted {
         sh 'terraform destroy -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
     }
+    }
+    
 }
