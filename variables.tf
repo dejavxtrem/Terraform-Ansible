@@ -33,7 +33,7 @@ variable "main_vol_size" {
 
 variable "main_instance_count" {
   type    = number
-  default = 1
+  default = 2
 }
 
 # any security variable should not have a default instead put in tfvars

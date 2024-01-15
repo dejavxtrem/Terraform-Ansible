@@ -39,9 +39,9 @@ resource "aws_instance" "terraformansible_main" {
     Name = "terraform_ansible_main-${random_id.terraforminsance_node_id[count.index].dec}"
   }
 
-  provisioner "local-exec" {
-    command = "printf '\n${self.public_ip}' >> aws_hosts"
-  }
+  # provisioner "local-exec" {
+  #   command = "printf '\n${self.public_ip}' >> aws_hosts"
+  # }
 
   #remove ip address from aws_host when destroyed
   #   provisioner "local-exec" {
@@ -61,11 +61,13 @@ resource "aws_instance" "terraformansible_main" {
 # }
 
 
-output "instance_ips" {
+output "grafana_instance_ips" {
   value = { for i in aws_instance.terraformansible_main[*] : i.tags.Name => "${i.public_ip}:3000" }
 }
 
-
+output "instance_ips" {
+  value = [for i in aws_instance.terraws_instance.terraformansible_main[*]: i.public_ip]
+}
 # resource "null_resource" "grafana_update" {
 #   count = var.main_instance_count
 #   provisioner "remote-exec" {
