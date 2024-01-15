@@ -1,7 +1,7 @@
 variable "vpc_cidr" {
   description = "cidr block"
   type        = string
-  default     = "10.124.0.0/16"
+  
 }
 
 

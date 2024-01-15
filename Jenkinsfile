@@ -10,17 +10,27 @@ pipeline {
         stage('Init') {
             steps {
                 sh 'ls'
+                sh 'cat $BRANCH_NAME.tfvars'
                 sh 'terraform init'
             }
         }
         stage('Plan') {
             steps {
-                sh 'terraform plan -no-color'
+                sh 'terraform plan -no-color -var-file="$BRANCH_NAME.tfvars"'
+            }
+        }
+        stage('validate apply') {
+            input {
+                message "Do you want to apply this plan"
+                ok "Apply this plan."
+            }
+            steps {
+                echo 'Apply Accepted'
             }
         }
         stage('Apply') {
             steps {
-                sh 'terraform apply -auto-approve -no-color'
+                sh 'terraform apply -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
             }
         }
         stage ('Ec2 Wait') {
@@ -28,15 +38,41 @@ pipeline {
                 sh 'aws ec2 wait instance-status-ok --region us-east-2'
             }
         }
+        stage ('validate ec2 provision') {
+            input {
+                message "Do you want to run Ansible?"
+                ok "Run Ansible"
+            }
+            steps {
+                echo 'Ansible Approved'
+            }
+        }
         stage('Ansible') {
             steps {
                 ansiblePlaybook(credentialsId: 'SSH-private-key' , inventory: 'aws_hosts' , playbook: 'playbooks/main-playbook.yml')
             }
         }
+        stage('Validate Destroy') {
+            input {
+                message "Do you want to destroy?"
+                ok "Destroy"
+            }
+            steps {
+                echo 'Destroy Approved'
+            }
+        }
         stage('Destroy') {
             steps {
-                sh 'terraform destroy -auto-approve -no-color'
+                sh 'terraform destroy -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
             }
+        }
+    }
+    post {
+        success {
+            echo 'Success!'
+        }
+        failure {
+            sh 'terraform destory -auto-approve -no-color -var-file="$BRANCH_NAME.tfvars"'
         }
     }
 }
