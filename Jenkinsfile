@@ -47,7 +47,7 @@ pipeline {
         stage ('Ec2 Wait') {
             steps {
                 sh '''aws ec2 wait instance-status-ok \\
-                    --instance-ids $(terraform show -json instance_ids | jq -r \'.values\'.\'root_module\'.\'resources[] | select(.type == "aws_instance").values.id\') \\
+                    --instance-ids $(terraform output -json instance_ids | jq -r \'.values\'.\'root_module\'.\'resources[] | select(.type == "aws_instance").values.id\') \\
                     --region us-east-2'''
             }
         }
@@ -67,6 +67,11 @@ pipeline {
         stage('Ansible') {
             steps {
                 ansiblePlaybook(credentialsId: 'SSH-private-key' , inventory: 'aws_hosts' , playbook: 'playbooks/main-playbook.yml')
+            }
+        }
+         stage('Test Grafana and Prometheus') {
+            steps {
+                ansiblePlaybook(credentialsId: 'SSH-private-key' , inventory: 'aws_hosts' , playbook: 'playbooks/node-test.yml')
             }
         }
   
